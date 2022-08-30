@@ -19,8 +19,12 @@ namespace Sandbox;
 /// </summary>
 public partial class MyGame : Sandbox.Game
 {
+	public State gameState = new DeathrunRound();
+	public static MyGame deathrun;
 	public MyGame()
 	{
+		deathrun = this;
+		
 	}
 
 	/// <summary>
@@ -29,24 +33,6 @@ public partial class MyGame : Sandbox.Game
 	public override void ClientJoined( Client client )
 	{
 		base.ClientJoined( client );
-
-		// Create a pawn for this client to play with
-		Player player = new DeathrunPlayer(client);
-		player.Respawn();
-		client.Pawn = player;
-
-		// Get all of the spawnpoints
-		var spawnpoints = Entity.All.OfType<SpawnPoint>();
-
-		// chose a random one
-		var randomSpawnPoint = spawnpoints.OrderBy( x => Guid.NewGuid() ).FirstOrDefault();
-
-		// if it exists, place the pawn there
-		if ( randomSpawnPoint != null )
-		{
-			var tx = randomSpawnPoint.Transform;
-			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
-			player.Transform = tx;
-		}
+		gameState.ManageClient(client);
 	}
 }

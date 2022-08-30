@@ -1,8 +1,7 @@
 using Sandbox;
 
-partial class DeathrunPlayer : Player
+partial class DeathrunPlayer : BasePlayer
 {
-	private TimeSince timeSinceDropped;
 	private TimeSince timeSinceJumpReleased;
 
 	private DamageInfo lastDamage;
@@ -12,6 +11,7 @@ partial class DeathrunPlayer : Player
 	{
 		// Load clothing from client data
 		Clothing.LoadFromClient( cl );
+		this.team = new Runner();
 	}
 
 	public override void Respawn()
@@ -38,39 +38,35 @@ partial class DeathrunPlayer : Player
 
 	public override void OnKilled()
 	{
-		base.OnKilled();
+		if(MyGame.deathrun.gameState.id is not 1){
+			base.OnKilled();
 
-		Particles.Create( "particles/explosion/barrel_explosion/explosion_fire_ring.vpcf", this.Position );
-		PlaySound( "sounds/explo_gas_can_01.sound" );
+			Particles.Create( "particles/explosion/barrel_explosion/explosion_fire_ring.vpcf", this.Position );
+			PlaySound( "sounds/explo_gas_can_01.sound" );
 
-		Controller = null;
+			Controller = null;
 
-		EnableAllCollisions = false;
-		EnableDrawing = false;
+			EnableAllCollisions = false;
+			EnableDrawing = false;
 
-		foreach ( var child in Children )
-		{
-			child.EnableDrawing = false;
+			foreach ( var child in Children ){
+				child.EnableDrawing = false;
+			}
 		}
 	}
 
 	public override void TakeDamage( DamageInfo info )
 	{
-		if ( GetHitboxGroup( info.HitboxIndex ) == 1 )
-		{
-			info.Damage *= 10.0f;
+		if(MyGame.deathrun.gameState.id is not 1){
+			if ( GetHitboxGroup( info.HitboxIndex ) == 1 ){
+				info.Damage *= 10.0f;
+			}
+
+			lastDamage = info;
+
+			base.TakeDamage( info );
 		}
-
-		lastDamage = info;
-
-		TookDamage( lastDamage.Flags, lastDamage.Position, lastDamage.Force );
-
-		base.TakeDamage( info );
-	}
-
-	[ClientRpc]
-	public void TookDamage( DamageFlags damageFlags, Vector3 forcePos, Vector3 force )
-	{
+		
 	}
 
 	public override PawnController GetActiveController()
@@ -115,17 +111,6 @@ partial class DeathrunPlayer : Player
 			}
 		}
 
-		if ( Input.Pressed( InputButton.Drop ) )
-		{
-			var dropped = Inventory.DropActive();
-			if ( dropped != null )
-			{
-				dropped.PhysicsGroup.ApplyImpulse( Velocity + EyeRotation.Forward * 500.0f + Vector3.Up * 100.0f, true );
-				dropped.PhysicsGroup.ApplyAngularImpulse( Vector3.Random * 100.0f, true );
-
-				timeSinceDropped = 0;
-			}
-		}
 
 		if ( Input.Released( InputButton.Jump ) )
 		{
@@ -181,13 +166,6 @@ partial class DeathrunPlayer : Player
 			animHelper.HoldType = CitizenAnimationHelper.HoldTypes.None;
 			animHelper.AimBodyWeight = 0.5f;
 		}
-	}
-
-	public override void StartTouch( Entity other )
-	{
-		if ( timeSinceDropped < 1 ) return;
-
-		base.StartTouch( other );
 	}
 
 	public override float FootstepVolume()
