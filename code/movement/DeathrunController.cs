@@ -1,8 +1,11 @@
 using Sandbox;
 
-partial class DeathrunPlayer : Player
+public partial class DeathrunPlayer : Player
 {
-	public LifeState life;
+	[Net]
+	public LifeState life {get; set;}
+
+	[Net] public Team team {get; set;} = TeamManager.Get("Waiting");
 
 	private TimeSince timeSinceJumpReleased;
 
@@ -15,7 +18,9 @@ partial class DeathrunPlayer : Player
 	public override void Respawn(){
 		if(Deathrun.current.getProgress() || life == LifeState.Dead){
 			// Create a Spectator Camera.
-			life = LifeState.Dead;
+			if(IsServer){
+				life = LifeState.Dead;
+			}
 			TeamManager.SwitchTeam(this, "WaitingTeam");
 
 			SetModel( "models/citizen/citizen.vmdl" );
@@ -29,7 +34,9 @@ partial class DeathrunPlayer : Player
 
 			CameraMode = new FirstPersonCamera();
 		} else {
-			life = LifeState.Alive;
+			if(IsServer){
+				life = LifeState.Alive;
+			}
 			SetModel( "models/citizen/citizen.vmdl" );
 
 			Controller = new WalkController();
@@ -50,11 +57,14 @@ partial class DeathrunPlayer : Player
 	public override void OnKilled()
 	{
 		base.OnKilled();
-		if(IsClient){
-			Sandbox.UI.ChatBox.AddChatEntry("Deathrun", $"{this.Client.Name} has died! (lmao)");
+		if(Deathrun.current.getProgress()){
+			if(IsServer){
+			Sandbox.UI.ChatBox.AddChatEntry( To.Everyone ,"Deathrun", $"{this.Client.Name} has died! (lmao)");
+			}
+			Particles.Create( "particles/explosion/barrel_explosion/explosion_fire_ring.vpcf", this.Position );
+			PlaySound( "sounds/explo_gas_can_01.sound" );
+			life = LifeState.Dead;
 		}
-		Particles.Create( "particles/explosion/barrel_explosion/explosion_fire_ring.vpcf", this.Position );
-		PlaySound( "sounds/explo_gas_can_01.sound" );
 
 		Controller = null;
 
@@ -64,7 +74,6 @@ partial class DeathrunPlayer : Player
 		foreach ( var child in Children ){
 			child.EnableDrawing = false;
 		}
-		life = LifeState.Dead;
 	}
 
 }

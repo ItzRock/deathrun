@@ -31,7 +31,7 @@ partial class DeathrunPlayer
 		TickPlayerUse();
 		SimulateActiveChild( cl, ActiveChild );
 
-		if ( Input.Pressed( InputButton.View ) && this.life == LifeState.Alive )
+		if ( Input.Pressed( InputButton.View ) && this.life != LifeState.Dead )
 		{
 			if ( CameraMode is ThirdPersonCamera )
 			{
@@ -41,7 +41,7 @@ partial class DeathrunPlayer
 			{
 				CameraMode = new ThirdPersonCamera();
 			}
-		} else CameraMode = new FirstPersonCamera();
+		}
 
 
 		if ( Input.Released( InputButton.Jump ) )

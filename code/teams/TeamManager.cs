@@ -11,14 +11,21 @@ public class TeamAttribute : LibraryAttribute{
 }
 public static class TeamManager{
 	public static Dictionary<string, Team> Teams { get; set;} = new();
-	public static void SwitchTeam(Player player, string team){
-		
+	public static void SwitchTeam(DeathrunPlayer player, string team){
+		if(Teams.ContainsKey(team)) {
+			player.team.Members.Remove(player);
+			Teams[team].Members.Add(player);
+		}
+	}
+	public static Team Get(string team){
+		if(Teams.ContainsKey(team)) return Teams[team];
+		else return null;
 	}
 }
 public abstract class Team{
 	public readonly string Name;
 	public abstract Color Color { get; }
-	public List<Player> Members { get; set; } = new();
+	public List<DeathrunPlayer> Members { get; set; } = new();
 	public Team(){
 		Name = GetType().ToString().ToLower();
 		if(!TeamManager.Teams.ContainsKey(Name)){
