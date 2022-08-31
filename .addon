@@ -16,7 +16,7 @@
     "GameNetworkType": "Multiplayer",
     "MapSelect": "Tagged",
     "MapList": [
-      "facepunch.flatgrass"
+      "deathrun_devland"
     ],
     "RankType": "None",
     "PerMapRanking": false,

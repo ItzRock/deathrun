@@ -1,38 +1,34 @@
 ﻿using Sandbox;
-using Sandbox.UI.Construct;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sandbox.UI;
 
-//
-// You don't need to put things in a namespace, but it doesn't hurt.
-//
 namespace Sandbox;
 
-/// <summary>
-/// This is your game class. This is an entity that is created serverside when
-/// the game starts, and is replicated to the client. 
-/// 
-/// You can use this to create things like HUDs and declare which player class
-/// to use for spawned players.
-/// </summary>
-public partial class MyGame : Sandbox.Game
-{
-	public State gameState = new DeathrunRound();
-	public static MyGame deathrun;
-	public MyGame()
-	{
-		deathrun = this;
-		
-	}
+public partial class Deathrun : Sandbox.Game{
+	public static bool inProgress = false;
 
-	/// <summary>
-	/// A client has joined the server. Make them a pawn to play with
-	/// </summary>
+	public static Deathrun current;
+	public Deathrun(){
+		current = this;
+		if(IsServer){
+			_ = new DeathrunHud();
+		};
+	}
 	public override void ClientJoined( Client client )
 	{
 		base.ClientJoined( client );
-		gameState.ManageClient(client);
+		
+		Player player = new DeathrunPlayer(client);
+		player.Respawn();
+		client.Pawn = player;
+	}
+	[ConCmd.Server( "setprogress" )]
+	public static void setProgress(bool progress){
+		inProgress = progress;
+	}
+	public bool getProgress(){
+		return inProgress;
 	}
 }
