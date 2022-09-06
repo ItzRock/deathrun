@@ -5,7 +5,7 @@ public partial class DeathrunPlayer : Player
 	[Net]
 	public LifeState life {get; set;}
 
-	[Net] public Team team {get; set;} = TeamManager.Get("Waiting");
+	public Team team {get; set;} = TeamManager.Get("waiting");
 
 	private TimeSince timeSinceJumpReleased;
 
@@ -19,9 +19,11 @@ public partial class DeathrunPlayer : Player
 		if(Deathrun.current.getProgress() || life == LifeState.Dead){
 			// Create a Spectator Camera.
 			if(IsServer){
+				if(team.Name == "runners") Deathrun.AlivePlayers--;
+				else Deathrun.ControllerDeath();
 				life = LifeState.Dead;
 			}
-			TeamManager.SwitchTeam(this, "WaitingTeam");
+			TeamManager.SwitchTeam(this, "waiting");
 
 			SetModel( "models/citizen/citizen.vmdl" );
 
