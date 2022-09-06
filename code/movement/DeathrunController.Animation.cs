@@ -43,6 +43,11 @@ partial class DeathrunPlayer
 			}
 		}
 
+		if( Input.Pressed ( InputButton.Slot9 ) ) {
+			ConsoleSystem.Run("bot_add");
+		} else if (Input.Pressed ( InputButton.Slot8 ) ) {
+			ConsoleSystem.Run("bot_remove");
+		}
 
 		if ( Input.Released( InputButton.Jump ) )
 		{

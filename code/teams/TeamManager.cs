@@ -21,6 +21,13 @@ public static class TeamManager{
 		if(Teams.ContainsKey(team)) return Teams[team];
 		else return null;
 	}
+	public static void RemovePlayer(Client client){
+		foreach(Team team in Teams.Values){
+			foreach(DeathrunPlayer player in team.Members){
+				if(player.Client == client) team.Members.Remove(player);
+			}
+		}
+	}
 }
 public abstract class Team{
 	public readonly string Name;

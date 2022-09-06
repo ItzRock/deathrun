@@ -27,6 +27,7 @@ public partial class Deathrun : Sandbox.Game{
 	}
 	public override void PostLevelLoaded(){
 		base.PostLevelLoaded();
+		playersToStart = playersToStart < 2 ? 2 : playersToStart;
 		// Setup spawnpoints
 		var spawnpoints = Entity.All.OfType<DeathrunSpawnPoint>();
 		foreach(var spawnpoint in spawnpoints){
@@ -62,7 +63,11 @@ public partial class Deathrun : Sandbox.Game{
 	{
 		base.ClientDisconnect( cl, reason );
 		players--;
+		TeamManager.RemovePlayer(cl);
 		enoughPlayers = players >= playersToStart;
+		if(inProgress && !enoughPlayers || TeamManager.Get("Controller").Members.Count <= 0) {
+			ChatBox.AddChatEntry( To.Everyone, "Deathrun", $"Current Deathrun Match is no longer playable, returning to waiting room.");
+		}
 	}
 	[ConCmd.Server( "setprogress" )]
 	public static void setProgress(bool progress){
@@ -76,8 +81,8 @@ public partial class Deathrun : Sandbox.Game{
 		if(IsServer && !startIsRunning){
 			startIsRunning = true;
 			enoughPlayers = true;
-			ChatBox.AddChatEntry( To.Everyone, "Deathrun", "Enough players have joined! Starting in 15 seconds.");
-			for(int i = 14; i > 0; i--){
+			ChatBox.AddChatEntry( To.Everyone, "Deathrun", "Deathrun is Ready! Starting in 5 seconds.");
+			for(int i = 4; i > 0; i--){
 				enoughPlayers = players >= playersToStart;
 				if(enoughPlayers)
 					ChatBox.AddChatEntry( To.Everyone, "Deathrun", $"Starting Deathrun in {i} seconds.");

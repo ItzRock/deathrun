@@ -3,7 +3,7 @@ using Sandbox;
 public class DeathrunBot : Bot{
 	internal static System.Collections.Generic.List<DeathrunBot> bots = new();
 
-	[ConCmd.Server("deathrun_bot_add")]
+	[ConCmd.Server("bot_add")]
 	internal static void SpawnCustomBot()
 	{
 		Host.AssertServer();
@@ -13,7 +13,7 @@ public class DeathrunBot : Bot{
 		bots.Add(bot);
 	}
 
-	[ConCmd.Server("deathrun_bot_remove")]
+	[ConCmd.Server("bot_remove")]
 	internal static void Remove(){
 		bots[0].Client.Kick();
 		bots.RemoveAt(0);
