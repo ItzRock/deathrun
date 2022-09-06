@@ -16,7 +16,8 @@
     "GameNetworkType": "Multiplayer",
     "MapSelect": "Tagged",
     "MapList": [
-      "deathrun_devland"
+      "deathrun_devland",
+      "stainton.development_hell"
     ],
     "RankType": "None",
     "PerMapRanking": false,
@@ -25,6 +26,17 @@
     "GameCategory": "Parkour",
     "ControlModes": {
       "Keyboard": true
+    },
+    "GameSettings": {
+      "players_required": {
+        "DisplayType": "Integer",
+        "Choices": [],
+        "ConVarName": "players_required",
+        "DisplayName": "Players Required to Start",
+        "DefaultValue": "0",
+        "Minimum": 2,
+        "Maximum": 24
+      }
     }
   }
 }
