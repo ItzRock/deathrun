@@ -1,7 +1,7 @@
 {
   "Title": "Deathrun",
   "Type": "game",
-  "Org": "local",
+  "Org": "stainton",
   "Ident": "deathrun",
   "Schema": 1,
   "HasAssets": true,

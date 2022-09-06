@@ -12,6 +12,6 @@ public enum SpawnPointType{
 [Title( "Player Spawnpoint Deathrun" ), Category( "Player" ), Icon( "place" )]
 public class DeathrunSpawnPoint : SpawnPoint
 {
-	[Property( Title = "Spawn Point Type " ) ]
+	[Property( Title = "Spawn Point Type" ) ]
 	public SpawnPointType SpawnType { get; set; } = SpawnPointType.Waiting;
 }
