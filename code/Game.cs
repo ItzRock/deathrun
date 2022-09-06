@@ -88,14 +88,16 @@ public partial class Deathrun : Sandbox.Game{
 				await GameTask.Delay(1000);
 			}
 			if(enoughPlayers){
-				Client controllerClient = Rand.FromList<Client>((List<Client>)Client.All);
+				Client controllerClient = Rand.FromList<Client>(Client.All.ToList());
 				DeathrunPlayer controllerPlayer = playerControllers[controllerClient.PlayerId];
 				ChatBox.AddChatEntry( To.Everyone, "Deathrun", $"Watch out! {controllerClient.Name} is the controlling the traps!");
 				foreach(Client client in Client.All){
 					if(playerControllers.ContainsKey(client.PlayerId)){
 						DeathrunPlayer player = playerControllers[client.PlayerId];
 						player.Respawn();
-						player.Position = RunnerPoints[Sandbox.Rand.Int(0, RunnerPoints.Count -1)].Position;
+						if(controllerClient.PlayerId == client.PlayerId){
+							player.Position = ControllerPoint[Sandbox.Rand.Int(0, ControllerPoint.Count -1)].Position;
+						} else player.Position = RunnerPoints[Sandbox.Rand.Int(0, RunnerPoints.Count -1)].Position;
 					}
 				}
 				inProgress = true;
