@@ -14,11 +14,13 @@ public partial class Deathrun : Sandbox.Game{
 
 	[Net] private Dictionary<long, DeathrunPlayer> playerControllers { get; set;} = new();
 
-	List<SpawnPoint> WaitingPoints = new();
-	List<SpawnPoint> RunnerPoints = new();
-	List<SpawnPoint> ControllerPoint = new();
+	Dictionary<SpawnPointType, List<DeathrunSpawnPoint>> SpawnPoints = new(){
+		{SpawnPointType.Waiting, new()},
+		{SpawnPointType.Runner, new()},
+		{SpawnPointType.Controller, new()},
+	};
+	
 	public static Deathrun current;
-
 	public Deathrun(){
 		current = this;
 		if(IsServer){
@@ -27,11 +29,11 @@ public partial class Deathrun : Sandbox.Game{
 	}
 	public override void PostLevelLoaded(){
 		base.PostLevelLoaded();
-		var spawnpoints = Entity.All.OfType<SpawnPoint>();
-		foreach(var spawnPoint in spawnpoints){
-			if(spawnPoint.Tags.Has("waiting")) WaitingPoints.Add(spawnPoint);
-			if(spawnPoint.Tags.Has("runner")) RunnerPoints.Add(spawnPoint);
-			if(spawnPoint.Tags.Has("controller")) ControllerPoint.Add(spawnPoint);
+		var spawnpoints = Entity.All.OfType<DeathrunSpawnPoint>();
+		foreach(var spawnpoint in spawnpoints){
+			SpawnPointType type = spawnpoint.SpawnType;
+			if(SpawnPoints[type] == null ) SpawnPoints[type] = new List<DeathrunSpawnPoint>();
+			SpawnPoints[type].Add(spawnpoint);
 		}
 	}
 	public override void ClientJoined( Client client ){
@@ -43,10 +45,10 @@ public partial class Deathrun : Sandbox.Game{
 
 		// Set spawnpoint to a waiting room spawn.
 		if(IsServer){
-			ChatBox.AddChatEntry( To.Everyone, "Debugger", $"Waiting Spawns: {WaitingPoints.Count} | Runner Spawns: {RunnerPoints.Count} | Controller Spawn: {ControllerPoint.Count}");
+			Log.Info($"Waiting Spawns: {SpawnPoints[SpawnPointType.Waiting].Count} | Runner Spawns: {SpawnPoints[SpawnPointType.Runner].Count} | Controller Spawn: {SpawnPoints[SpawnPointType.Controller].Count}");
 		}
 		if(enoughPlayers == false && IsServer || inProgress == false && IsServer) {
-			player.Position = WaitingPoints[Sandbox.Rand.Int(0, WaitingPoints.Count -1)].Position;
+			player.Position = SpawnPoints[SpawnPointType.Waiting][Sandbox.Rand.Int(0, SpawnPoints[SpawnPointType.Waiting].Count -1)].Position;
 		}
 		
 
@@ -96,8 +98,8 @@ public partial class Deathrun : Sandbox.Game{
 						DeathrunPlayer player = playerControllers[client.PlayerId];
 						player.Respawn();
 						if(controllerClient.PlayerId == client.PlayerId){
-							player.Position = ControllerPoint[Sandbox.Rand.Int(0, ControllerPoint.Count -1)].Position;
-						} else player.Position = RunnerPoints[Sandbox.Rand.Int(0, RunnerPoints.Count -1)].Position;
+							player.Position = SpawnPoints[SpawnPointType.Controller][Sandbox.Rand.Int(0, SpawnPoints[SpawnPointType.Controller].Count -1)].Position;
+						} else player.Position = SpawnPoints[SpawnPointType.Runner][Sandbox.Rand.Int(0, SpawnPoints[SpawnPointType.Runner].Count -1)].Position;
 					}
 				}
 				inProgress = true;
