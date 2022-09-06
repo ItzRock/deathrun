@@ -11,7 +11,7 @@
   "CodePath": "/code/",
   "RootNamespace": null,
   "Metadata": {
-    "MaxPlayers": 20,
+    "MaxPlayers": 24,
     "MinPlayers": 2,
     "GameNetworkType": "Multiplayer",
     "MapSelect": "Tagged",
