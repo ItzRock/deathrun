@@ -4,11 +4,9 @@ using System.Linq;
 using System.Collections.Generic;
 using Sandbox.UI;
 
-namespace Sandbox;
-
 public partial class Deathrun : Sandbox.Game{
 	[Net] public static bool inProgress { get; set; } = false;
-	[Net] public static int playersToStart { get; } = 3;
+	[ConVar.Replicated("players_required"), Net] public static int playersToStart { get; set; } = 2;
 	[Net] public static int players { get; set; } = 0;
 	[Net] public bool enoughPlayers { get; set; } = false;
 
@@ -29,6 +27,7 @@ public partial class Deathrun : Sandbox.Game{
 	}
 	public override void PostLevelLoaded(){
 		base.PostLevelLoaded();
+		// Setup spawnpoints
 		var spawnpoints = Entity.All.OfType<DeathrunSpawnPoint>();
 		foreach(var spawnpoint in spawnpoints){
 			SpawnPointType type = spawnpoint.SpawnType;
@@ -42,7 +41,6 @@ public partial class Deathrun : Sandbox.Game{
 		player.Respawn();
 		client.Pawn = player;
 		playerControllers.Add(client.PlayerId, player);
-
 		// Set spawnpoint to a waiting room spawn.
 		if(IsServer){
 			Log.Info($"Waiting Spawns: {SpawnPoints[SpawnPointType.Waiting].Count} | Runner Spawns: {SpawnPoints[SpawnPointType.Runner].Count} | Controller Spawn: {SpawnPoints[SpawnPointType.Controller].Count}");

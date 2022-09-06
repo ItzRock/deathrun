@@ -36,6 +36,26 @@
         "DefaultValue": "0",
         "Minimum": 2,
         "Maximum": 24
+      },
+      "end_weapon": {
+        "DisplayType": "Choice",
+        "Choices": [
+          {
+            "Value": "weapon_dr_bat",
+            "Name": "Baseball Bat"
+          },
+          {
+            "Value": "weapon_dr_fists",
+            "Name": "Fists"
+          },
+          {
+            "Value": "weapon_dr_pistol",
+            "Name": "Pistol"
+          }
+        ],
+        "ConVarName": "end_weapon",
+        "DisplayName": "Finishing Weapon",
+        "DefaultValue": "weapon_dr_bat"
       }
     }
   }
