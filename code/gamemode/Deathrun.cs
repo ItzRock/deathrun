@@ -17,7 +17,7 @@ public partial class Deathrun : Sandbox.Game {
 	[Net] private Dictionary<long, DeathrunPlayer> playerControllers { get; set;} = new();
 	public List<Client> Controllers { get; set; } = new();
 	[Net] public int TotalControllers { get; private set; } = 1;
-
+	[Net] public int lastPlayerIndex { get; set; }
 	[Net] public static int AlivePlayers { get; set; }
 
 	[Net] Dictionary<SpawnPointType, List<DeathrunSpawnPoint>> SpawnPoints { get; set; } = new(){
@@ -72,11 +72,14 @@ public partial class Deathrun : Sandbox.Game {
 				}
 				// For each controller we can have
 				for(int i = 1; i <= TotalControllers; i++){
-					int randomIndex = Rand.Int(0, TeamManager.Get("runners").Members.Count);
-					Client controllerClient = TeamManager.Get("runners").Members[randomIndex].Client;
+					
+					if( lastPlayerIndex >= Client.All.Count ) 
+						lastPlayerIndex = 0;  
+					Client controllerClient = TeamManager.Get("runners").Members[lastPlayerIndex].Client;
 					Controllers.Add(controllerClient);
 					Log.Info($"Picked {controllerClient.Name} as a Controller");
 					TeamManager.SwitchTeam(playerControllers[controllerClient.PlayerId], "controller");
+					lastPlayerIndex++;
 				}
 				AlivePlayers = TeamManager.Get("runners").Members.Count;
 				string message = TotalControllers == 1 ? $"Watch out! {Controllers[0].Name} is the controlling the traps!" : $"Watch out! {Controllers[0].Name} and {Controllers[1].Name} is the controlling the traps!";
@@ -86,7 +89,6 @@ public partial class Deathrun : Sandbox.Game {
 			} else startIsRunning = false;
 		}
 	}
-	[ConCmd.Server("dr_respawn_all")]
 	public void Respawn(){
 		pointsUsed = new(){
 			{SpawnPointType.Waiting, 0},
@@ -117,8 +119,6 @@ public partial class Deathrun : Sandbox.Game {
 			}
 		}
 	}
-		
-	[ConCmd.Server("dr_restart")]
 	public void RestartGame(){
 		pointsUsed = new(){
 			{SpawnPointType.Waiting, 0},

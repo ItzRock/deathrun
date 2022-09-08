@@ -1,7 +1,7 @@
 using Sandbox;
 
 public partial class Deathrun : Sandbox.Game {
-	[ConCmd.Server( "setprogress" )]
+	[ConCmd.Server( "dr_setprogress" )]
 	public static void setProgress(bool progress){
 		inProgress = progress;
 	}

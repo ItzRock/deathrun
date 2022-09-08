@@ -2,7 +2,6 @@ using Sandbox;
 using SandboxEditor;
 
 [Library( "deathrun_rules" ), HammerEntity]
-//[EditorModel( "models/editor/playerstart.vmdl" )]
 [Title( "Deathrun Rules" ), Category( "Deathrun" ), Icon( "place" )]
 public class DeathrunRules : Entity
 {

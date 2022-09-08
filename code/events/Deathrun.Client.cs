@@ -20,6 +20,7 @@ public partial class Deathrun : Sandbox.Game {
 	public override void ClientJoined( Client client ){
 		base.ClientJoined( client );
 		ClientsChanged( client );
+
 		// Setup their player
 		DeathrunPlayer player = new DeathrunPlayer(client);
 		player.Respawn();
